@@ -15,7 +15,7 @@
     "application/json"
   ],
   "paths": {
-    "/calling/callConnections/{callConnectionId}/audioRoutingGroups/{audioRoutingGroupId}": {
+    "/calling/callConnections/{callConnectionId}/audioGroups/{audioGroupId}": {
       "get": {
         "tags": [
           "AudioRoutingGroup"
@@ -31,7 +31,7 @@
             "type": "string"
           },
           {
-            "name": "audioRoutingGroupId",
+            "name": "audioGroupId",
             "in": "path",
             "description": "The audio routing group id.",
             "required": true,
@@ -43,9 +43,9 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the get audio routing group response.",
+            "description": "Returns the get audio group response.",
             "schema": {
-              "$ref": "#/definitions/AudioRoutingGroupResult"
+              "$ref": "#/definitions/AudioGroupResult"
             }
           },
           "400": {
@@ -85,7 +85,7 @@
             "type": "string"
           },
           {
-            "name": "audioRoutingGroupId",
+            "name": "audioGroupId",
             "in": "path",
             "description": "The audio routing group id.",
             "required": true,
@@ -96,8 +96,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Returns the delete audio routing group response."
+          "202": {
+            "description": "Returns the delete audio group response."
           },
           "400": {
             "$ref": "#/responses/400"
@@ -136,19 +136,19 @@
             "type": "string"
           },
           {
-            "name": "audioRoutingGroupId",
+            "name": "audioGroupId",
             "in": "path",
             "description": "The audio routing group id.",
             "required": true,
             "type": "string"
           },
           {
-            "name": "updateAudioRoutingGroupRequest",
+            "name": "updateAudioGroupRequest",
             "in": "body",
             "description": "The update audio routing group request.",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UpdateAudioRoutingGroupRequest"
+              "$ref": "#/definitions/UpdateAudioGroupRequest"
             }
           },
           {
@@ -157,7 +157,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the update audio routing group response."
+            "description": "Returns the update audio group response."
           },
           "400": {
             "$ref": "#/responses/400"
@@ -643,7 +643,7 @@
         }
       }
     },
-    "/calling/callConnections/{callConnectionId}/:createAudioRoutingGroup": {
+    "/calling/callConnections/{callConnectionId}/:createAudioGroup": {
       "post": {
         "tags": [
           "CallConnection"
@@ -659,12 +659,12 @@
             "type": "string"
           },
           {
-            "name": "audioRoutingGroupRequest",
+            "name": "audioGroupRequest",
             "in": "body",
             "description": "The audio routing group request.",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AudioRoutingGroupRequest"
+              "$ref": "#/definitions/AudioGroupRequest"
             }
           },
           {
@@ -673,9 +673,9 @@
         ],
         "responses": {
           "201": {
-            "description": "Returns the create audio routing group response.",
+            "description": "Returns the create audio group response.",
             "schema": {
-              "$ref": "#/definitions/CreateAudioRoutingGroupResult"
+              "$ref": "#/definitions/CreateAudioGroupResult"
             }
           },
           "400": {
@@ -2122,7 +2122,7 @@
         "modelAsString": true
       }
     },
-    "AudioRoutingGroupResult": {
+    "AudioGroupResult": {
       "description": "The audio routing group result.",
       "type": "object",
       "properties": {
@@ -2153,7 +2153,7 @@
     "MicrosoftTeamsUserIdentifier": {
       "$ref": "../../../Common/stable/2021-03-07/common.json#/definitions/MicrosoftTeamsUserIdentifierModel"
     },
-    "UpdateAudioRoutingGroupRequest": {
+    "UpdateAudioGroupRequest": {
       "description": "The update audio routing group request.",
       "required": [
         "targets"
@@ -2252,6 +2252,7 @@
     "CallConnectionState": {
       "description": "The state of the call connection.",
       "enum": [
+        "unknown",
         "connecting",
         "connected",
         "transferring",
@@ -2505,7 +2506,7 @@
         }
       }
     },
-    "AudioRoutingGroupRequest": {
+    "AudioGroupRequest": {
       "description": "The audio routing group request.",
       "required": [
         "audioRoutingMode",
@@ -2525,7 +2526,7 @@
         }
       }
     },
-    "CreateAudioRoutingGroupResult": {
+    "CreateAudioGroupResult": {
       "description": "The response payload of the create audio routing group operation.",
       "type": "object",
       "properties": {
@@ -2820,7 +2821,7 @@
       }
     },
     "MuteParticipantRequest": {
-      "description": "The request payload to mute a participant",
+      "description": "The request payload for muting any participant",
       "required": [
         "identifier"
       ],
@@ -2837,7 +2838,7 @@
       }
     },
     "UnmuteParticipantRequest": {
-      "description": "The request payload to unmute a participant",
+      "description": "The request payload for unmuting any participant",
       "required": [
         "identifier"
       ],
@@ -3215,7 +3216,6 @@
       }
     },
     "AddParticipantResultEvent": {
-      "description": "The add participant result event.",
       "required": [
         "status"
       ],
@@ -3225,12 +3225,20 @@
           "$ref": "#/definitions/CallingOperationResultDetails",
           "description": "The result details."
         },
+        "operationId": {
+          "description": "The operation id.",
+          "type": "string"
+        },
         "operationContext": {
           "description": "The operation context.",
           "type": "string"
         },
         "status": {
           "$ref": "#/definitions/CallingOperationStatus"
+        },
+        "callLocator": {
+          "$ref": "#/definitions/CallLocator",
+          "description": "The server call locator."
         }
       }
     },
@@ -3241,6 +3249,10 @@
         "callConnectionId": {
           "description": "The call connection id.",
           "type": "string"
+        },
+        "callLocator": {
+          "$ref": "#/definitions/CallLocator",
+          "description": "The server call locator."
         },
         "participants": {
           "description": "The list of participants.",
@@ -3262,12 +3274,20 @@
           "$ref": "#/definitions/CallingOperationResultDetails",
           "description": "The result details."
         },
+        "operationId": {
+          "description": "The operation id.",
+          "type": "string"
+        },
         "operationContext": {
           "description": "The operation context.",
           "type": "string"
         },
         "status": {
           "$ref": "#/definitions/CallingOperationStatus"
+        },
+        "callLocator": {
+          "$ref": "#/definitions/CallLocator",
+          "description": "The server call locator."
         }
       }
     },
@@ -3285,6 +3305,10 @@
         "callConnectionId": {
           "description": "The call connection id.",
           "type": "string"
+        },
+        "callLocator": {
+          "$ref": "#/definitions/CallLocator",
+          "description": "The server call locator."
         }
       }
     },
@@ -3344,12 +3368,20 @@
           "$ref": "#/definitions/CallingOperationResultDetails",
           "description": "The result details."
         },
+        "operationId": {
+          "description": "The operation id.",
+          "type": "string"
+        },
         "operationContext": {
           "description": "The operation context.",
           "type": "string"
         },
         "status": {
           "$ref": "#/definitions/CallingOperationStatus"
+        },
+        "callLocator": {
+          "$ref": "#/definitions/CallLocator",
+          "description": "The server call locator."
         }
       }
     },
