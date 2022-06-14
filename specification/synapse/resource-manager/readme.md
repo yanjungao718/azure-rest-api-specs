@@ -28,10 +28,19 @@ These are the global settings for the Azure Synapse Analytics API.
 description: Azure Synapse Analytics Management Client
 openapi-type: arm
 azure-arm: true
-tag: package-composite-v2
+tag: package-composite-v3
 generate-empty-classes: true
 modelerfour:
   lenient-model-deduplication: true
+```
+
+### Tag: package-composite-v3
+
+These settings apply only when `--tag=package-composite-v3` is specified on the command line.
+
+```yaml $(tag) == 'package-composite-v3'
+input-file:
+  - Microsoft.Synapse/stable/2021-06-01/integrationRuntime.json
 ```
 
 ### Tag: package-composite-v2
@@ -383,7 +392,6 @@ csharp:
   clear-output-folder: true
 batch:
  - tag: $(tag)
- - tag: package-sqlGen3-2020-04-01-preview
 ```
 
 ## Go
